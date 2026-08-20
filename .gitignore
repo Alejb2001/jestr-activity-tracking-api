@@ -11,6 +11,7 @@ appsettings.json
 
 # Archivos de contexto local — no subir a GitHub
 CONTEXT.md
+MEJORAS_SUGERIDAS.md
 
 # User-specific files
 *.rsuser
