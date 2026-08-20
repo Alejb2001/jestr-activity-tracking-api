@@ -6,6 +6,9 @@
 # dotenv files
 .env
 
+# Archivos con credenciales — no subir a GitHub
+appsettings.json
+
 # User-specific files
 *.rsuser
 *.suo
