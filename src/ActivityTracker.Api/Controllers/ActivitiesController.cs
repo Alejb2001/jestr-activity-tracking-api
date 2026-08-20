@@ -1,12 +1,14 @@
 using ActivityTracker.Application.DTOs;
 using ActivityTracker.Application.Interfaces;
 using ActivityTracker.Domain.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ActivityTracker.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ActivitiesController : ControllerBase
 {
     private readonly IActivityService _service;
