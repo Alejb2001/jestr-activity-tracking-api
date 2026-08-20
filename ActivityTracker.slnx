@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ActivityTracker.Api/ActivityTracker.Api.csproj" />
+    <Project Path="src/ActivityTracker.Application/ActivityTracker.Application.csproj" />
+    <Project Path="src/ActivityTracker.Domain/ActivityTracker.Domain.csproj" />
+    <Project Path="src/ActivityTracker.Infrastructure/ActivityTracker.Infrastructure.csproj" />
+  </Folder>
+</Solution>
