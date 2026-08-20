@@ -9,6 +9,9 @@
 # Archivos con credenciales — no subir a GitHub
 appsettings.json
 
+# Archivos de contexto local — no subir a GitHub
+CONTEXT.md
+
 # User-specific files
 *.rsuser
 *.suo
