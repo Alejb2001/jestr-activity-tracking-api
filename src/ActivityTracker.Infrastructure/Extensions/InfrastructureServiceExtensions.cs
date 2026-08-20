@@ -17,6 +17,7 @@ public static class InfrastructureServiceExtensions
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IActivityRepository, ActivityRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         return services;
     }
 }
