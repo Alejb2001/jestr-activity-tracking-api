@@ -1,10 +1,11 @@
 using ActivityTracker.Application.DTOs;
+using ActivityTracker.Domain.Queries;
 
 namespace ActivityTracker.Application.Interfaces;
 
 public interface IActivityService
 {
-    Task<IEnumerable<ActivityDto>> GetAllAsync();
+    Task<PagedResult<ActivityDto>> GetAllAsync(ActivityQueryParams queryParams);
     Task<ActivityDto?> GetByIdAsync(int id);
     Task<ActivityDto> CreateAsync(CreateActivityDto dto);
     Task<ActivityDto?> UpdateAsync(int id, UpdateActivityDto dto);

@@ -2,6 +2,7 @@ using ActivityTracker.Application.DTOs;
 using ActivityTracker.Application.Interfaces;
 using ActivityTracker.Domain.Entities;
 using ActivityTracker.Domain.Interfaces;
+using ActivityTracker.Domain.Queries;
 
 namespace ActivityTracker.Application.Services;
 
@@ -14,10 +15,18 @@ public class ActivityService : IActivityService
         _repository = repository;
     }
 
-    public async Task<IEnumerable<ActivityDto>> GetAllAsync()
+    public async Task<PagedResult<ActivityDto>> GetAllAsync(ActivityQueryParams queryParams)
     {
-        var activities = await _repository.GetAllAsync();
-        return activities.Select(MapToDto);
+        var (items, totalCount) = await _repository.GetAllAsync(queryParams);
+        var totalPages = (int)Math.Ceiling(totalCount / (double)queryParams.PageSize);
+
+        return new PagedResult<ActivityDto>(
+            items.Select(MapToDto),
+            totalCount,
+            queryParams.Page,
+            queryParams.PageSize,
+            totalPages
+        );
     }
 
     public async Task<ActivityDto?> GetByIdAsync(int id)

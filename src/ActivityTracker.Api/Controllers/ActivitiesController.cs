@@ -1,5 +1,6 @@
 using ActivityTracker.Application.DTOs;
 using ActivityTracker.Application.Interfaces;
+using ActivityTracker.Domain.Queries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ActivityTracker.Api.Controllers;
@@ -16,8 +17,8 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll() =>
-        Ok(await _service.GetAllAsync());
+    public async Task<IActionResult> GetAll([FromQuery] ActivityQueryParams queryParams) =>
+        Ok(await _service.GetAllAsync(queryParams));
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
