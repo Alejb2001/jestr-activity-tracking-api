@@ -41,8 +41,8 @@ public class ActivityService : IActivityService
         {
             Title          = dto.Title,
             Description    = dto.Description,
-            ScheduledStart = dto.ScheduledStart,
-            ScheduledEnd   = dto.ScheduledEnd,
+            ScheduledStart = DateTime.SpecifyKind(dto.ScheduledStart, DateTimeKind.Utc),
+            ScheduledEnd   = DateTime.SpecifyKind(dto.ScheduledEnd,   DateTimeKind.Utc),
             AssignedUserId = dto.AssignedUserId,
             CompanyId      = dto.CompanyId,
             CreatedAt      = DateTime.UtcNow
@@ -57,8 +57,8 @@ public class ActivityService : IActivityService
 
         existing.Title          = dto.Title;
         existing.Description    = dto.Description;
-        existing.ScheduledStart = dto.ScheduledStart;
-        existing.ScheduledEnd   = dto.ScheduledEnd;
+        existing.ScheduledStart = DateTime.SpecifyKind(dto.ScheduledStart, DateTimeKind.Utc);
+        existing.ScheduledEnd   = DateTime.SpecifyKind(dto.ScheduledEnd,   DateTimeKind.Utc);
         existing.Status         = dto.Status;
         existing.AssignedUserId = dto.AssignedUserId;
         existing.UpdatedAt      = DateTime.UtcNow;
