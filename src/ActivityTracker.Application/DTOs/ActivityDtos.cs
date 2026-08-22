@@ -13,7 +13,8 @@ public record ActivityDto(
     string StatusLabel,
     string AssignedUserId,
     DateTime CreatedAt,
-    DateTime? UpdatedAt
+    DateTime? UpdatedAt,
+    ActivityPriority Priority
 );
 
 public record CreateActivityDto(
@@ -36,7 +37,9 @@ public record CreateActivityDto(
     [MaxLength(100, ErrorMessage = "El ID del responsable no puede superar 100 caracteres.")]
     string AssignedUserId,
 
-    int? CompanyId
+    int? CompanyId,
+
+    ActivityPriority Priority = ActivityPriority.Medium
 ) : IValidatableObject
 {
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -69,7 +72,9 @@ public record UpdateActivityDto(
 
     [Required(ErrorMessage = "El responsable es requerido.")]
     [MaxLength(100, ErrorMessage = "El ID del responsable no puede superar 100 caracteres.")]
-    string AssignedUserId
+    string AssignedUserId,
+
+    ActivityPriority Priority = ActivityPriority.Medium
 ) : IValidatableObject
 {
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -80,3 +85,8 @@ public record UpdateActivityDto(
                 new[] { nameof(ScheduledEnd) });
     }
 }
+
+public record PatchStatusDto(
+    [EnumDataType(typeof(ActivityStatus), ErrorMessage = "Estado de actividad no válido.")]
+    ActivityStatus Status
+);

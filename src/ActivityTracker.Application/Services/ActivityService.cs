@@ -1,6 +1,7 @@
 using ActivityTracker.Application.DTOs;
 using ActivityTracker.Application.Interfaces;
 using ActivityTracker.Domain.Entities;
+using ActivityTracker.Domain.Enums;
 using ActivityTracker.Domain.Interfaces;
 using ActivityTracker.Domain.Queries;
 
@@ -44,6 +45,7 @@ public class ActivityService : IActivityService
             ScheduledStart = DateTime.SpecifyKind(dto.ScheduledStart, DateTimeKind.Utc),
             ScheduledEnd   = DateTime.SpecifyKind(dto.ScheduledEnd,   DateTimeKind.Utc),
             AssignedUserId = dto.AssignedUserId,
+            Priority       = dto.Priority,
             CompanyId      = dto.CompanyId,
             CreatedAt      = DateTime.UtcNow
         };
@@ -60,9 +62,19 @@ public class ActivityService : IActivityService
         existing.ScheduledStart = DateTime.SpecifyKind(dto.ScheduledStart, DateTimeKind.Utc);
         existing.ScheduledEnd   = DateTime.SpecifyKind(dto.ScheduledEnd,   DateTimeKind.Utc);
         existing.Status         = dto.Status;
+        existing.Priority       = dto.Priority;
         existing.AssignedUserId = dto.AssignedUserId;
         existing.UpdatedAt      = DateTime.UtcNow;
 
+        return MapToDto(await _repository.UpdateAsync(existing));
+    }
+
+    public async Task<ActivityDto?> PatchStatusAsync(int id, ActivityStatus status)
+    {
+        var existing = await _repository.GetByIdAsync(id);
+        if (existing is null) return null;
+        existing.Status    = status;
+        existing.UpdatedAt = DateTime.UtcNow;
         return MapToDto(await _repository.UpdateAsync(existing));
     }
 
@@ -71,6 +83,7 @@ public class ActivityService : IActivityService
 
     private static ActivityDto MapToDto(Activity a) => new(
         a.Id, a.Title, a.Description, a.ScheduledStart, a.ScheduledEnd,
-        a.Status, a.Status.ToString(), a.AssignedUserId, a.CreatedAt, a.UpdatedAt
+        a.Status, a.Status.ToString(), a.AssignedUserId, a.CreatedAt, a.UpdatedAt,
+        a.Priority
     );
 }

@@ -46,6 +46,7 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Description).HasMaxLength(1000);
             entity.Property(e => e.AssignedUserId).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Status).HasConversion<string>();
+            entity.Property(e => e.Priority).HasConversion<string>();
             entity.HasOne(e => e.Company)
                   .WithMany(c => c.Activities)
                   .HasForeignKey(e => e.CompanyId)

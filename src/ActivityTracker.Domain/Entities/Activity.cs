@@ -10,6 +10,7 @@ public class Activity
     public DateTime ScheduledStart { get; set; }
     public DateTime ScheduledEnd { get; set; }
     public ActivityStatus Status { get; set; } = ActivityStatus.Pending;
+    public ActivityPriority Priority { get; set; } = ActivityPriority.Medium;
     public string AssignedUserId { get; set; } = string.Empty;
     public int? CompanyId { get; set; }
     public Company? Company { get; set; }

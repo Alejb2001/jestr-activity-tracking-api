@@ -58,6 +58,15 @@ public class ActivitiesController : ControllerBase
         return updated is null ? NotFound() : Ok(updated);
     }
 
+    [HttpPatch("{id:int}/status")]
+    public async Task<IActionResult> PatchStatus(int id, [FromBody] PatchStatusDto dto)
+    {
+        if (IsViewer) return Forbid();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var updated = await _service.PatchStatusAsync(id, dto.Status);
+        return updated is null ? NotFound() : Ok(updated);
+    }
+
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
