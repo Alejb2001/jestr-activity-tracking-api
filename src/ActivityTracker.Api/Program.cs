@@ -52,6 +52,10 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 
+    // Ensure Priority column exists regardless of migration state
+    db.Database.ExecuteSqlRaw(
+        "ALTER TABLE \"Activities\" ADD COLUMN IF NOT EXISTS \"Priority\" text NOT NULL DEFAULT 'Medium'");
+
     if (!db.AppUsers.Any(u => u.Username == "admin"))
     {
         db.AppUsers.Add(new AppUser
