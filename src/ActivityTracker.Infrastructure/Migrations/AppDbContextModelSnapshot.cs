@@ -46,6 +46,10 @@ namespace ActivityTracker.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("ScheduledEnd")
                         .HasColumnType("timestamp with time zone");
 

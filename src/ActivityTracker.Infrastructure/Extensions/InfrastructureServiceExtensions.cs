@@ -2,6 +2,7 @@ using ActivityTracker.Domain.Interfaces;
 using ActivityTracker.Infrastructure.Data;
 using ActivityTracker.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +15,8 @@ public static class InfrastructureServiceExtensions
         IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+                   .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
