@@ -1,10 +1,12 @@
 using System.Text;
+using System.Text.Json;
 using ActivityTracker.Application.Extensions;
 using ActivityTracker.Application.Helpers;
 using ActivityTracker.Domain.Entities;
 using ActivityTracker.Infrastructure.Data;
 using ActivityTracker.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -84,6 +86,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var origin = context.Request.Headers.Origin.ToString();
+        if (!string.IsNullOrEmpty(origin))
+        {
+            context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+            context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
+        }
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        var ex = context.Features.Get<IExceptionHandlerFeature>();
+        await context.Response.WriteAsync(
+            JsonSerializer.Serialize(new { message = ex?.Error?.Message ?? "Error interno del servidor." }));
+    });
+});
 
 app.UseCors("AngularDev");
 app.UseAuthentication();
