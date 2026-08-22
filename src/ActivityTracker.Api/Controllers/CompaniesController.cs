@@ -31,6 +31,21 @@ public class CompaniesController : ControllerBase
     private bool CanAccessCompany(int companyId) =>
         IsGlobalAdmin || (UserRole == "company_admin" && CompanyId == companyId);
 
+    // ── Public (no auth) ─────────────────────────────────────────────────────
+
+    /// <summary>Returns active companies for the login dropdown (no auth required).</summary>
+    [HttpGet("public")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetPublic()
+    {
+        var all = await _service.GetAllAsync();
+        var result = all
+            .Where(c => c.IsActive)
+            .OrderBy(c => c.Name)
+            .Select(c => new { c.Name, c.Code });
+        return Ok(result);
+    }
+
     // ── Company CRUD ──────────────────────────────────────────────────────────
 
     [HttpGet]
