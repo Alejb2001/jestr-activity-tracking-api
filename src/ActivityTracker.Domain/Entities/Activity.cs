@@ -11,6 +11,8 @@ public class Activity
     public DateTime ScheduledEnd { get; set; }
     public ActivityStatus Status { get; set; } = ActivityStatus.Pending;
     public string AssignedUserId { get; set; } = string.Empty;
+    public int? CompanyId { get; set; }
+    public Company? Company { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
 }

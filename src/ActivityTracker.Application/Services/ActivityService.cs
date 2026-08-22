@@ -15,9 +15,9 @@ public class ActivityService : IActivityService
         _repository = repository;
     }
 
-    public async Task<PagedResult<ActivityDto>> GetAllAsync(ActivityQueryParams queryParams)
+    public async Task<PagedResult<ActivityDto>> GetAllAsync(ActivityQueryParams queryParams, int? companyId)
     {
-        var (items, totalCount) = await _repository.GetAllAsync(queryParams);
+        var (items, totalCount) = await _repository.GetAllAsync(queryParams, companyId);
         var totalPages = (int)Math.Ceiling(totalCount / (double)queryParams.PageSize);
 
         return new PagedResult<ActivityDto>(
@@ -44,6 +44,7 @@ public class ActivityService : IActivityService
             ScheduledStart = dto.ScheduledStart,
             ScheduledEnd   = dto.ScheduledEnd,
             AssignedUserId = dto.AssignedUserId,
+            CompanyId      = dto.CompanyId,
             CreatedAt      = DateTime.UtcNow
         };
         return MapToDto(await _repository.CreateAsync(activity));

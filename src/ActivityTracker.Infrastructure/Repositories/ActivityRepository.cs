@@ -15,9 +15,13 @@ public class ActivityRepository : IActivityRepository
         _context = context;
     }
 
-    public async Task<(IEnumerable<Activity> Items, int TotalCount)> GetAllAsync(ActivityQueryParams q)
+    public async Task<(IEnumerable<Activity> Items, int TotalCount)> GetAllAsync(ActivityQueryParams q, int? companyId)
     {
         var query = _context.Activities.AsQueryable();
+
+        // Scope by company: null companyId = global user (sees all)
+        if (companyId.HasValue)
+            query = query.Where(a => a.CompanyId == companyId.Value);
 
         if (q.Status.HasValue)
             query = query.Where(a => a.Status == q.Status.Value);

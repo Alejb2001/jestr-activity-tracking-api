@@ -24,13 +24,13 @@ public class AuthController : ControllerBase
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public IActionResult Login([FromBody] LoginDto dto)
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        var result = _authService.ValidateCredentials(dto);
+        var result = await _authService.ValidateCredentialsAsync(dto);
         if (result is null)
-            return Unauthorized(new { message = "Usuario o contrase\u00f1a incorrectos." });
+            return Unauthorized(new { message = "Credenciales incorrectas o empresa no válida." });
 
-        var response = GenerateToken(result.Value.Username, result.Value.Role);
+        var response = GenerateToken(result.Value.Username, result.Value.Role, result.Value.CompanyId, result.Value.CompanyName);
         return Ok(response);
     }
 
@@ -43,7 +43,7 @@ public class AuthController : ControllerBase
         return Ok(new { username, role });
     }
 
-    private AuthResponseDto GenerateToken(string username, string role)
+    private AuthResponseDto GenerateToken(string username, string role, int? companyId, string? companyName)
     {
         var jwtSection = _config.GetSection("Jwt");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["Key"]!));
@@ -51,12 +51,18 @@ public class AuthController : ControllerBase
         var expiryHours = int.Parse(jwtSection["ExpiryHours"] ?? "8");
         var expiresAt = DateTime.UtcNow.AddHours(expiryHours);
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, role),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new(ClaimTypes.Name, username),
+            new(ClaimTypes.Role, role),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+        if (companyId.HasValue)
+        {
+            claims.Add(new Claim("company_id", companyId.Value.ToString()));
+            claims.Add(new Claim("company_name", companyName ?? string.Empty));
+        }
 
         var token = new JwtSecurityToken(
             issuer: jwtSection["Issuer"],
@@ -69,6 +75,8 @@ public class AuthController : ControllerBase
             Token: new JwtSecurityTokenHandler().WriteToken(token),
             Username: username,
             Role: role,
+            CompanyId: companyId,
+            CompanyName: companyName,
             ExpiresAt: expiresAt);
     }
 }

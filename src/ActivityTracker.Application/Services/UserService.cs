@@ -14,9 +14,9 @@ public class UserService : IUserService
         _repository = repository;
     }
 
-    public async Task<IEnumerable<UserDto>> GetAllActiveAsync()
+    public async Task<IEnumerable<UserDto>> GetAllActiveAsync(int? companyId)
     {
-        var users = await _repository.GetAllActiveAsync();
+        var users = await _repository.GetAllActiveAsync(companyId);
         return users.Select(MapToDto);
     }
 

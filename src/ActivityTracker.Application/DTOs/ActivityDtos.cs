@@ -34,7 +34,9 @@ public record CreateActivityDto(
 
     [Required(ErrorMessage = "El responsable es requerido.")]
     [MaxLength(100, ErrorMessage = "El ID del responsable no puede superar 100 caracteres.")]
-    string AssignedUserId
+    string AssignedUserId,
+
+    int? CompanyId
 ) : IValidatableObject
 {
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

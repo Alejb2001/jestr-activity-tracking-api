@@ -1,25 +1,36 @@
 using ActivityTracker.Application.DTOs;
+using ActivityTracker.Application.Helpers;
 using ActivityTracker.Application.Interfaces;
+using ActivityTracker.Domain.Interfaces;
 
 namespace ActivityTracker.Application.Services;
 
 public class AuthService : IAuthService
 {
-    // Demo users: in a real app these would come from a database with hashed passwords.
-    private static readonly Dictionary<string, (string Password, string Role)> _users = new()
+    private readonly IAppUserRepository _users;
+
+    public AuthService(IAppUserRepository users)
     {
-        { "admin",  ("Admin123!",  "Admin") },
-        { "viewer", ("Viewer123!", "Viewer") }
-    };
+        _users = users;
+    }
 
-    public (string Username, string Role)? ValidateCredentials(LoginDto dto)
+    public async Task<(string Username, string Role, int? CompanyId, string? CompanyName)?> ValidateCredentialsAsync(LoginDto dto)
     {
-        if (!_users.TryGetValue(dto.Username.ToLower(), out var userData))
-            return null;
+        var user = await _users.GetByUsernameAsync(dto.Username.Trim().ToLower());
+        if (user is null || !user.IsActive) return null;
 
-        if (userData.Password != dto.Password)
-            return null;
+        // Company validation: non-global roles must supply the correct company code
+        var isGlobal = user.Role is "admin" or "viewer";
+        if (!isGlobal)
+        {
+            if (string.IsNullOrWhiteSpace(dto.CompanyCode)) return null;
+            if (user.Company is null || !string.Equals(user.Company.Code, dto.CompanyCode.Trim(), StringComparison.OrdinalIgnoreCase))
+                return null;
+            if (!user.Company.IsActive) return null;
+        }
 
-        return (dto.Username.ToLower(), userData.Role);
+        if (!PasswordHelper.Verify(dto.Password, user.PasswordHash)) return null;
+
+        return (user.Username, user.Role, user.CompanyId, user.Company?.Name);
     }
 }

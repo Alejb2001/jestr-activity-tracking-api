@@ -17,9 +17,13 @@ public class UsersController : ControllerBase
         _service = service;
     }
 
+    private int? TenantId =>
+        User.Claims.FirstOrDefault(c => c.Type == "company_id")?.Value is string v && int.TryParse(v, out var id)
+            ? id : null;
+
     [HttpGet]
     public async Task<IActionResult> GetAll() =>
-        Ok(await _service.GetAllActiveAsync());
+        Ok(await _service.GetAllActiveAsync(TenantId));
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)

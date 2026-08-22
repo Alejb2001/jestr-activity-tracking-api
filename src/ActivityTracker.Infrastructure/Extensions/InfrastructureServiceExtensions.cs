@@ -18,6 +18,8 @@ public static class InfrastructureServiceExtensions
 
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ICompanyRepository, CompanyRepository>();
+        services.AddScoped<IAppUserRepository, AppUserRepository>();
         return services;
     }
 }

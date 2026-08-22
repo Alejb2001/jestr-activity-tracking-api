@@ -14,11 +14,13 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<User>> GetAllActiveAsync() =>
-        await _context.Users
-            .Where(u => u.IsActive)
-            .OrderBy(u => u.Name)
-            .ToListAsync();
+    public async Task<IEnumerable<User>> GetAllActiveAsync(int? companyId)
+    {
+        var query = _context.Users.Where(u => u.IsActive);
+        if (companyId.HasValue)
+            query = query.Where(u => u.CompanyId == companyId.Value);
+        return await query.OrderBy(u => u.Name).ToListAsync();
+    }
 
     public async Task<User?> GetByIdAsync(int id) =>
         await _context.Users.FindAsync(id);
