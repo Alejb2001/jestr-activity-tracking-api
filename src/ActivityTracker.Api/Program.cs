@@ -101,7 +101,12 @@ app.UseExceptionHandler(errorApp =>
         context.Response.ContentType = "application/json";
         var ex = context.Features.Get<IExceptionHandlerFeature>();
         await context.Response.WriteAsync(
-            JsonSerializer.Serialize(new { message = ex?.Error?.Message ?? "Error interno del servidor." }));
+            JsonSerializer.Serialize(new
+            {
+                message = ex?.Error?.Message ?? "Error interno del servidor.",
+                inner   = ex?.Error?.InnerException?.Message,
+                inner2  = ex?.Error?.InnerException?.InnerException?.Message
+            }));
     });
 });
 
